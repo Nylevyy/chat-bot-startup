@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessageReceiver = void 0;
-var generators_1 = require("../messages/generators");
+var start_1 = require("../scenario/start");
 var UserService_1 = require("../services/UserService");
 var types_1 = require("./types");
 var MessageReceiver = /** @class */ (function () {
@@ -47,97 +47,39 @@ var MessageReceiver = /** @class */ (function () {
     }
     MessageReceiver.prototype.init = function () {
         var _this = this;
-        this.bot.on('message', function (_a) {
-            var text = _a.text, chat = _a.chat;
-            return __awaiter(_this, void 0, void 0, function () {
-                var userName, generator, _b, preferredCar, preferredWheelRadius, user, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            if (!(text === types_1.Commands.START)) return [3 /*break*/, 3];
-                            userName = chat.first_name + " " + chat.last_name;
-                            generator = generators_1.startGenerator(userName);
-                            return [4 /*yield*/, startFn(generator, {
-                                    chat: chat,
-                                    bot: this.bot,
-                                })];
-                        case 1:
-                            _b = _c.sent(), preferredCar = _b.preferredCar, preferredWheelRadius = _b.preferredWheelRadius;
-                            user = {
-                                name: userName,
-                                chatId: chat.id,
-                                preferredCar: preferredCar,
-                                preferredWheelRadius: preferredWheelRadius,
-                            };
-                            return [4 /*yield*/, this.userService.addUser(user)];
-                        case 2:
-                            response = _c.sent();
-                            if (response) {
-                                this.bot.sendMessage(chat.id, "\n            user: {\n              id: " + response.id + ",\n              name: " + response.name + ",\n              chatId: " + response.chatId + ",\n              preferredCar: " + response.preferredCar + ",\n              preferredWheelRadius: " + response.preferredWheelRadius + ",\n            }");
-                            }
-                            _c.label = 3;
-                        case 3: return [2 /*return*/];
-                    }
-                });
+        this.userService.init();
+        this.bot.on('message', function (chat) { return __awaiter(_this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = chat.text;
+                        switch (_a) {
+                            case types_1.Commands.START: return [3 /*break*/, 1];
+                            case types_1.Commands.REFRESH: return [3 /*break*/, 3];
+                        }
+                        return [3 /*break*/, 5];
+                    case 1: return [4 /*yield*/, start_1.startScenario({
+                            chat: chat,
+                            bot: this.bot,
+                            userService: this.userService,
+                        })];
+                    case 2:
+                        _b.sent();
+                        return [3 /*break*/, 6];
+                    case 3: return [4 /*yield*/, this.userService.refresh()];
+                    case 4:
+                        _b.sent();
+                        this.bot.sendMessage(chat.chat.id, 'Database was dropped');
+                        return [3 /*break*/, 6];
+                    case 5:
+                        this.bot.sendMessage(chat.chat.id, 'Invalid command, try /start or /refresh');
+                        return [3 /*break*/, 6];
+                    case 6: return [2 /*return*/];
+                }
             });
-        });
+        }); });
     };
     return MessageReceiver;
 }());
 exports.MessageReceiver = MessageReceiver;
-var startFn = function (generator, _a) {
-    var chat = _a.chat, bot = _a.bot;
-    return __awaiter(void 0, void 0, void 0, function () {
-        function processMessage() {
-            return __awaiter(this, void 0, void 0, function () {
-                var _a, message, done, answer, nextResponse;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0:
-                            _a = generator.next(), message = _a.value, done = _a.done;
-                            if (!message) return [3 /*break*/, 3];
-                            return [4 /*yield*/, bot.sendMessage(chat.id, message)];
-                        case 1:
-                            _b.sent();
-                            return [4 /*yield*/, waitMessage(bot)];
-                        case 2:
-                            answer = _b.sent();
-                            preferredCar += answer;
-                            _b.label = 3;
-                        case 3:
-                            if (done) {
-                                return [2 /*return*/, Promise.resolve({
-                                        preferredCar: preferredCar,
-                                        preferredWheelRadius: preferredWheelRadius,
-                                    })];
-                            }
-                            return [4 /*yield*/, processMessage()];
-                        case 4:
-                            nextResponse = _b.sent();
-                            return [2 /*return*/, nextResponse];
-                    }
-                });
-            });
-        }
-        var preferredCar, preferredWheelRadius, result;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    preferredCar = '';
-                    preferredWheelRadius = 0;
-                    return [4 /*yield*/, processMessage()];
-                case 1:
-                    result = _b.sent();
-                    return [2 /*return*/, result];
-            }
-        });
-    });
-};
-function waitMessage(bot) {
-    return new Promise(function (res) {
-        bot.once('message', function (_a) {
-            var text = _a.text;
-            res(text);
-        });
-    });
-}

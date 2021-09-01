@@ -9,6 +9,11 @@ class UserService {
     this.userModel = getUserModel(db);
   }
 
+  async init() {
+    await db.authenticate();
+    await db.sync();
+  }
+
   async addUser(user: UserCreationAttr) {
     try {
       const newUser = await this.userModel.create(user);
@@ -25,8 +30,12 @@ class UserService {
         preferredCar: car,
       },
     });
-
     return users;
+  }
+
+  // !WARNING temporary method
+  async refresh() {
+    await db.drop();
   }
 }
 

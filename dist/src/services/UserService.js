@@ -43,6 +43,21 @@ var UserService = /** @class */ (function () {
     function UserService() {
         this.userModel = User_1.getUserModel(DBService_1.db);
     }
+    UserService.prototype.init = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, DBService_1.db.authenticate()];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, DBService_1.db.sync()];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     UserService.prototype.addUser = function (user) {
         return __awaiter(this, void 0, void 0, function () {
             var newUser, e_1;
@@ -76,6 +91,19 @@ var UserService = /** @class */ (function () {
                     case 1:
                         users = _a.sent();
                         return [2 /*return*/, users];
+                }
+            });
+        });
+    };
+    // !WARNING temporary method
+    UserService.prototype.refresh = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, DBService_1.db.drop()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
                 }
             });
         });

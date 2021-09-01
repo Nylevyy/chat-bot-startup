@@ -1,8 +1,7 @@
 import {
   DataTypes,
   Model,
-  Sequelize as SequelizeType,
-  UUIDV4,
+  Sequelize,
 } from 'sequelize';
 
 export type User = {
@@ -30,13 +29,13 @@ class UserModel extends Model<User, UserCreationAttr> {
 
 export type UserModelType = typeof UserModel;
 
-export const getUserModel = (sequelize: SequelizeType) => {
+export const getUserModel = (sequelize: Sequelize) => {
   return sequelize.define('users', {
     id: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       unique: true,
       primaryKey: true,
-      defaultValue: UUIDV4,
+      defaultValue: DataTypes.UUIDV4,
     },
     chatId: {
       type: DataTypes.INTEGER,

@@ -5,4 +5,5 @@ var Commands;
 (function (Commands) {
     Commands["START"] = "/start";
     Commands["INFO"] = "/info";
+    Commands["REFRESH"] = "/refresh";
 })(Commands = exports.Commands || (exports.Commands = {}));

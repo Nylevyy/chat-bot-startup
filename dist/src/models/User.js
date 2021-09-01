@@ -27,10 +27,10 @@ var UserModel = /** @class */ (function (_super) {
 var getUserModel = function (sequelize) {
     return sequelize.define('users', {
         id: {
-            type: sequelize_1.DataTypes.UUIDV4,
+            type: sequelize_1.DataTypes.UUID,
             unique: true,
             primaryKey: true,
-            defaultValue: sequelize_1.UUIDV4,
+            defaultValue: sequelize_1.DataTypes.UUIDV4,
         },
         chatId: {
             type: sequelize_1.DataTypes.INTEGER,
